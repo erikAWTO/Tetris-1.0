@@ -3,7 +3,7 @@ using UnityEngine;
 public class Tetromino : MonoBehaviour
 {
     private float fall = 0f;
-    public float fallSpeed = 0.8f;
+    private float fallSpeed = 0.8f;
 
     public Vector3 rotationPoint;
 
@@ -74,7 +74,6 @@ public class Tetromino : MonoBehaviour
                 this.enabled = false;
                 FindObjectOfType<Spawn>().SpawnTetromino();
             }
-
             fall = Time.time;
         }
     }
@@ -91,7 +90,6 @@ public class Tetromino : MonoBehaviour
             if(!ValidPosition())
             {
                 transform.position -= Vector3.down;
-
             }
         }
     }
