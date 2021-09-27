@@ -1,12 +1,43 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class Game : MonoBehaviour
 {
     public static int gridWidth = 10;
     public static int gridHeight = 20;
 
+    private int numberOfRowsThisTurn = 0;
+    private int currentScore;
+
     public static Transform[,] grid = new Transform[gridWidth, gridHeight];
+
+    public Text scoreText;
+
+    public enum ScorePerRow
+    {
+        One = 1,
+        Two,
+        Three,
+        Four,
+        Five,
+        Six
+    }
+
+    private void Update()
+    {
+        UpdateScore();
+
+        //Debug.Log(ScorePerRow[0]);
+    }
+
+    public void UpdateScore()
+    {
+        if(numberOfRowsThisTurn > 0)
+        {
+           
+        }
+    }
 
     //Kollar om tetrominon är över vår spelplan.
     public bool CheckIsAboveGrid(Tetromino tetromino)
@@ -41,6 +72,7 @@ public class Game : MonoBehaviour
                 return false;
             }
         }
+        numberOfRowsThisTurn++;
         return true;
     }
 
