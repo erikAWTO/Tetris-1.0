@@ -2,18 +2,22 @@ using UnityEngine;
 
 public class Tetromino : MonoBehaviour
 {
-    private float fall = 0f;
-    private float fallSpeed = 0.8f;
+    private float prevFalltime = 0f;
+    private float falltime;
 
     public Vector3 rotationPoint;
 
-    // Update is called once per frame
+    private void Start()
+    {
+        falltime = Level.fallTime;
+    }
+
     private void Update()
     {
         CheckInput();
     }
 
-    // Tar input från användaren.
+    // Input från användaren.
     private void CheckInput()
     {
         if (Input.GetKeyDown(KeyCode.LeftArrow))
@@ -51,9 +55,9 @@ public class Tetromino : MonoBehaviour
                 transform.RotateAround(transform.TransformPoint(rotationPoint), Vector3.forward, -90f);
             }
         }
-        // Vi kollar diffrenensen: (Tid sen spelet startade) - (Föregående tid) om detta överstiger vår fallSpeed(falltid) kommer tetrominon flyttas ned ett steg.
-        // Om nedåtpilen är nedtryckt minskar vi fallSpeed(falltiden) och därmed kan vi flytta tetrominon snabbare.
-        else if (Time.time - fall > (Input.GetKeyDown(KeyCode.DownArrow) ? fallSpeed / 10 : fallSpeed))
+        // Vi kollar diffrenensen: (Tid sen spelet startade) - (Föregående tid) om detta överstiger vår fallTime(falltid) kommer tetrominon flyttas ned ett steg.
+        // Om nedåtpilen är nedtryckt minskar vi fallTime(falltiden) och därmed kan vi flytta tetrominon snabbare.
+        else if (Time.time - prevFalltime > (Input.GetKeyDown(KeyCode.DownArrow) ? falltime / 10 : falltime))
         {
             transform.position += Vector3.down;
 
@@ -65,6 +69,7 @@ public class Tetromino : MonoBehaviour
 
                 FindObjectOfType<Game>().DeleteRow();
 
+                //Om någon tetromino är över spelplanen.
                 if (FindObjectOfType<Game>().CheckIsAboveGrid(this))
                 {
                     FindObjectOfType<Game>().GameOver();
@@ -74,34 +79,39 @@ public class Tetromino : MonoBehaviour
                 this.enabled = false;
                 FindObjectOfType<Spawn>().SpawnTetromino();
             }
-            fall = Time.time;
+            //Sätter den förflutna tiden till tiden sen spelet startade.
+            prevFalltime = Time.time;
+            Debug.Log(falltime);
         }
     }
 
+    // Gör så att tetrominon hamnar på den lägsta tillgängliga raden direkt.
     private void HardDrop()
     {
+        falltime = 0.1f;
         if (ValidPosition())
         {
             while (ValidPosition())
             {
                 transform.position += Vector3.down;
             }
-
-            if(!ValidPosition())
+            if (!ValidPosition())
             {
                 transform.position -= Vector3.down;
             }
         }
     }
 
+    // Kollar om positionen är tom eller inte.
     private bool ValidPosition()
     {
         foreach (Transform children in transform)
         {
-            //Avrundar positionen till ett heltal för att vi ska kunna jobba med en 2D-array.
+            //Avrundar positionen till ett heltal för att vi ska använda en 2D-array.
             int posX = Mathf.RoundToInt(children.transform.position.x);
             int posY = Mathf.RoundToInt(children.transform.position.y);
 
+            //Kollar om positionen är inom spelplanen.
             if (posX < 0 || posX >= Game.gridWidth || posY < 0 || posY >= Game.gridHeight)
             {
                 return false;
