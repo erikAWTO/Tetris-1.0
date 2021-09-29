@@ -3,12 +3,19 @@ using UnityEngine.UI;
 
 public class Score : MonoBehaviour
 {
-    public Text textScore;
+    public Text txtScore;
+    //public Text txtFinalScore;
+    public Text txtLinesCleared;
+
+    //public static int finalScore = 0;
 
     public static int currentScore = 0;
+    public static int linesCleared = 0;
 
     private void Update()
     {
-        textScore.text = currentScore.ToString();
+        txtScore.text = currentScore.ToString();
+        txtLinesCleared.text = linesCleared.ToString();
+        //txtFinalScore.text = finalScore.ToString();
     }
 }

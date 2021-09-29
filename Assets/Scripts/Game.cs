@@ -10,11 +10,6 @@ public class Game : MonoBehaviour
 
     public static Transform[,] grid = new Transform[gridWidth, gridHeight];
 
-    private void Update()
-    {
-        UpdateScore();
-    }
-
     // Underlättar om vi vill ändra på poäng per rad.
     public enum ScorePerRow
     {
@@ -50,6 +45,7 @@ public class Game : MonoBehaviour
                 default:
                     break;
             }
+            Tetromino.decreaseFalltime = true;
             rowsThisTurn = 0;
         }
     }
@@ -88,6 +84,7 @@ public class Game : MonoBehaviour
             }
         }
         rowsThisTurn++;
+        Score.linesCleared++;
         return true;
     }
 
@@ -157,9 +154,12 @@ public class Game : MonoBehaviour
         }
     }
 
-    // Tetrisproffsets mardröm
+    // Tetrisproffsets mardröm :O
     public void GameOver()
     {
+        //Score.finalScore = Score.currentScore;
+        Score.currentScore = 0;
+        Score.linesCleared = 0;
         SceneManager.LoadScene("GameOver");
     }
 }

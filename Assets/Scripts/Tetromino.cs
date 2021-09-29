@@ -3,18 +3,52 @@ using UnityEngine;
 public class Tetromino : MonoBehaviour
 {
     private float prevFalltime = 0f;
-    private float falltime;
+
+    private static float falltime;
+
+    public static bool decreaseFalltime = false;
+    private static bool gameStarted = false;
+
+    private bool gamePaused = false;
 
     public Vector3 rotationPoint;
 
     private void Start()
     {
-        falltime = Level.fallTime;
+        // Vid första uppstart av spelet vill vi ha 0.8 i falltid.
+        if (!gameStarted)
+        {
+            gameStarted = true;
+
+            falltime = 0.8f;
+        }
     }
 
     private void Update()
     {
-        CheckInput();
+        CheckIfPaused();
+
+        if (!gamePaused)
+        {
+            CheckInput();
+        }
+    }
+
+    private void CheckIfPaused()
+    {
+        if (Input.GetKeyUp(KeyCode.Escape))
+        {
+            if (!gamePaused)
+            {
+                gamePaused = true;
+                Time.timeScale = 0;
+            }
+            else
+            {
+                gamePaused = false;
+                Time.timeScale = 1f;
+            }
+        }
     }
 
     // Input från användaren.
@@ -45,7 +79,7 @@ public class Tetromino : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.UpArrow))
         {
             //Rotera runt punkten som vi har angett. Detta krävs för att offseten på vissa tetrominos inte ska bli fel.
-            //Exempelbild på vart vi vill har vår rotationspunkt för de olika "tetrominorna".
+            //Exempelbild på vart vi vill har vår rotationspunkt för de olika tetrominorna.
             //https://static.wikia.nocookie.net/tetrisconcept/images/3/3d/SRS-pieces.png/revision/latest/scale-to-width-down/336?cb=20060626173148
             //OBS! Rotationspunkten utgår ifrån parent.
             transform.RotateAround(transform.TransformPoint(rotationPoint), Vector3.forward, 90f);
@@ -69,6 +103,8 @@ public class Tetromino : MonoBehaviour
 
                 FindObjectOfType<Game>().DeleteRow();
 
+                FindObjectOfType<Game>().UpdateScore();
+
                 //Om någon tetromino är över spelplanen.
                 if (FindObjectOfType<Game>().CheckIsAboveGrid(this))
                 {
@@ -81,6 +117,7 @@ public class Tetromino : MonoBehaviour
             }
             //Sätter den förflutna tiden till tiden sen spelet startade.
             prevFalltime = Time.time;
+            DecreaseFalltime();
             Debug.Log(falltime);
         }
     }
@@ -88,7 +125,6 @@ public class Tetromino : MonoBehaviour
     // Gör så att tetrominon hamnar på den lägsta tillgängliga raden direkt.
     private void HardDrop()
     {
-        falltime = 0.1f;
         if (ValidPosition())
         {
             while (ValidPosition())
@@ -99,6 +135,18 @@ public class Tetromino : MonoBehaviour
             {
                 transform.position -= Vector3.down;
             }
+        }
+    }
+
+    // Minskar falltiden / tetrominon faller snabbare.
+    private void DecreaseFalltime()
+    {
+        if (decreaseFalltime && falltime > 0.1f)
+        {
+            decreaseFalltime = false;
+
+            falltime = falltime * 0.9f;
+            Debug.Log(falltime);
         }
     }
 
@@ -117,7 +165,7 @@ public class Tetromino : MonoBehaviour
                 return false;
             }
 
-            //Om positionen inte är upptagen.
+            //Om positionen är upptagen.
             if (Game.grid[posX, posY] != null)
             {
                 return false;
