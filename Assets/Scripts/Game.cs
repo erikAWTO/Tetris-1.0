@@ -10,7 +10,7 @@ public class Game : MonoBehaviour
 
     public static Transform[,] grid = new Transform[gridWidth, gridHeight];
 
-    // Underlättar om vi vill ändra på poäng per rad.
+    // UnderlÃ¤ttar om vi vill Ã¤ndra pÃ¥ poÃ¤ng per rad.
     public enum ScorePerRow
     {
         One = 100,
@@ -19,7 +19,7 @@ public class Game : MonoBehaviour
         Four = 1000
     }
 
-    // Uppdaterar poängen.
+    // Uppdaterar poÃ¤ngen.
     public void UpdateScore()
     {
         if (rowsThisTurn > 0)
@@ -50,7 +50,7 @@ public class Game : MonoBehaviour
         }
     }
 
-    // Kollar om tetrominon är över vår spelplan.
+    // Kollar om tetrominon Ã¤r Ã¶ver vÃ¥r spelplan.
     public bool CheckIsAboveGrid(Tetromino tetromino)
     {
         for (int x = 0; x < gridWidth; x++)
@@ -71,9 +71,9 @@ public class Game : MonoBehaviour
         return false;
     }
 
-    // Vi går igenom den angivna raden och kollar om positionerna är null eller inte.
-    // Så snabbt vi hittar en null --> Return false;
-    // Om ingen är tom så betyder det att vi har en full rad.
+    // Vi gÃ¥r igenom den angivna raden och kollar om positionerna Ã¤r null eller inte.
+    // SÃ¥ snabbt vi hittar en null --> Return false;
+    // Om ingen Ã¤r tom sÃ¥ betyder det att vi har en full rad.
     public bool IsFullRow(int y)
     {
         for (int x = 0; x < gridWidth; x++)
@@ -88,10 +88,10 @@ public class Game : MonoBehaviour
         return true;
     }
 
-    // Tar bort alla tetrominos på en rad.
+    // Tar bort alla tetrominos pÃ¥ en rad.
     public void DeleteTetromino(int y)
     {
-        //Tar bort raden och sätter raden till tom.
+        //Tar bort raden och sÃ¤tter raden till tom.
         for (int x = 0; x < gridWidth; x++)
         {
             Destroy(grid[x, y].gameObject);
@@ -106,17 +106,17 @@ public class Game : MonoBehaviour
         {
             if (grid[x, y] != null)
             {
-                //Förflyttar radens positioner i grid ett steg nedåt.
+                //FÃ¶rflyttar radens positioner i grid ett steg nedÃ¥t.
                 grid[x, y - 1] = grid[x, y];
                 grid[x, y] = null;
 
-                //Uppdatera positionen för tetrominon.
+                //Uppdatera positionen fÃ¶r tetrominon.
                 grid[x, y - 1].position += new Vector3(0, -1, 0);
             }
         }
     }
 
-    // Allting som är ovanför raden y flyttas ned.
+    // Allting som Ã¤r ovanfÃ¶r raden y flyttas ned.
     public void MoveAllRowsDown(int y)
     {
         for (int i = y; i < gridHeight; i++)
@@ -125,7 +125,7 @@ public class Game : MonoBehaviour
         }
     }
 
-    // Tar bort raden och flyttar ned raderna ovanför.
+    // Tar bort raden och flyttar ned raderna ovanfÃ¶r.
     public void DeleteRow()
     {
         for (int y = 0; y < gridHeight; y++)
@@ -135,8 +135,8 @@ public class Game : MonoBehaviour
                 DeleteTetromino(y);
                 MoveAllRowsDown(y + 1);
 
-                //y minskar med en varje gång en rad raderas.
-                //För att se till att nästa iteration i for-loopen fortsätter vid rätt index.
+                //y minskar med en varje gÃ¥ng en rad raderas.
+                //FÃ¶r att se till att nÃ¤sta iteration i for-loopen fortsÃ¤tter vid rÃ¤tt index.
                 --y;
             }
         }
@@ -154,10 +154,11 @@ public class Game : MonoBehaviour
         }
     }
 
-    // Tetrisproffsets mardröm :O
+    // Tetrisproffsets mardrÃ¶m :O
     public void GameOver()
     {
         //Score.finalScore = Score.currentScore;
+        Tetromino.gameStarted = false;
         Score.currentScore = 0;
         Score.linesCleared = 0;
         SceneManager.LoadScene("GameOver");
