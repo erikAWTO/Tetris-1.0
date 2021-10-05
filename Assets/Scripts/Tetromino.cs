@@ -3,11 +3,11 @@ using UnityEngine;
 public class Tetromino : MonoBehaviour
 {
     private float prevFalltime = 0f;
-
     private static float falltime;
 
     public static bool decreaseFalltime = false;
-    private static bool gameStarted = false;
+    
+    public static bool gameStarted = false;
 
     private bool gamePaused = false;
 
@@ -15,7 +15,7 @@ public class Tetromino : MonoBehaviour
 
     private void Start()
     {
-        // Vid första uppstart av spelet vill vi ha 0.8 i falltid.
+        // Vid fÃ¶rsta uppstart av spelet vill vi ha 0.8 i falltid.
         if (!gameStarted)
         {
             gameStarted = true;
@@ -51,7 +51,7 @@ public class Tetromino : MonoBehaviour
         }
     }
 
-    // Input från användaren.
+    // Input frÃ¥n anvÃ¤ndaren.
     private void CheckInput()
     {
         if (Input.GetKeyDown(KeyCode.LeftArrow))
@@ -78,10 +78,10 @@ public class Tetromino : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.UpArrow))
         {
-            //Rotera runt punkten som vi har angett. Detta krävs för att offseten på vissa tetrominos inte ska bli fel.
-            //Exempelbild på vart vi vill har vår rotationspunkt för de olika tetrominorna.
+            //Rotera runt punkten som vi har angett. Detta krÃ¤vs fÃ¶r att offseten pÃ¥ vissa tetrominos inte ska bli fel.
+            //Exempelbild pÃ¥ vart vi vill har vÃ¥r rotationspunkt fÃ¶r de olika tetrominorna.
             //https://static.wikia.nocookie.net/tetrisconcept/images/3/3d/SRS-pieces.png/revision/latest/scale-to-width-down/336?cb=20060626173148
-            //OBS! Rotationspunkten utgår ifrån parent.
+            //OBS! Rotationspunkten utgÃ¥r ifrÃ¥n parent.
             transform.RotateAround(transform.TransformPoint(rotationPoint), Vector3.forward, 90f);
 
             if (!ValidPosition())
@@ -89,8 +89,8 @@ public class Tetromino : MonoBehaviour
                 transform.RotateAround(transform.TransformPoint(rotationPoint), Vector3.forward, -90f);
             }
         }
-        // Vi kollar diffrenensen: (Tid sen spelet startade) - (Föregående tid) om detta överstiger vår fallTime(falltid) kommer tetrominon flyttas ned ett steg.
-        // Om nedåtpilen är nedtryckt minskar vi fallTime(falltiden) och därmed kan vi flytta tetrominon snabbare.
+        // Vi kollar diffrenensen: (Tid sen spelet startade) - (FÃ¶regÃ¥ende tid) om detta Ã¶verstiger vÃ¥r fallTime(falltid) kommer tetrominon flyttas ned ett steg.
+        // Om nedÃ¥tpilen Ã¤r nedtryckt minskar vi fallTime(falltiden) och dÃ¤rmed kan vi flytta tetrominon snabbare.
         else if (Time.time - prevFalltime > (Input.GetKeyDown(KeyCode.DownArrow) ? falltime / 10 : falltime))
         {
             transform.position += Vector3.down;
@@ -105,24 +105,24 @@ public class Tetromino : MonoBehaviour
 
                 FindObjectOfType<Game>().UpdateScore();
 
-                //Om någon tetromino är över spelplanen.
+                //Om nÃ¥gon tetromino Ã¤r Ã¶ver spelplanen.
                 if (FindObjectOfType<Game>().CheckIsAboveGrid(this))
                 {
                     FindObjectOfType<Game>().GameOver();
                 }
 
-                //Slå av nuvarande tetromino och spawna en ny.
+                //SlÃ¥ av nuvarande tetromino och spawna en ny.
                 this.enabled = false;
                 FindObjectOfType<Spawn>().SpawnTetromino();
             }
-            //Sätter den förflutna tiden till tiden sen spelet startade.
+            //SÃ¤tter den fÃ¶rflutna tiden till tiden sen spelet startade.
             prevFalltime = Time.time;
             DecreaseFalltime();
             Debug.Log(falltime);
         }
     }
 
-    // Gör så att tetrominon hamnar på den lägsta tillgängliga raden direkt.
+    // GÃ¶r sÃ¥ att tetrominon hamnar pÃ¥ den lÃ¤gsta tillgÃ¤ngliga raden direkt.
     private void HardDrop()
     {
         if (ValidPosition())
@@ -150,22 +150,22 @@ public class Tetromino : MonoBehaviour
         }
     }
 
-    // Kollar om positionen är tom eller inte.
+    // Kollar om positionen Ã¤r tom eller inte.
     private bool ValidPosition()
     {
         foreach (Transform children in transform)
         {
-            //Avrundar positionen till ett heltal för att vi ska använda en 2D-array.
+            //Avrundar positionen till ett heltal fÃ¶r att vi ska anvÃ¤nda en 2D-array.
             int posX = Mathf.RoundToInt(children.transform.position.x);
             int posY = Mathf.RoundToInt(children.transform.position.y);
 
-            //Kollar om positionen är inom spelplanen.
+            //Kollar om positionen Ã¤r inom spelplanen.
             if (posX < 0 || posX >= Game.gridWidth || posY < 0 || posY >= Game.gridHeight)
             {
                 return false;
             }
 
-            //Om positionen är upptagen.
+            //Om positionen Ã¤r upptagen.
             if (Game.grid[posX, posY] != null)
             {
                 return false;
